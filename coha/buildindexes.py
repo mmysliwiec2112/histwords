@@ -30,10 +30,10 @@ if __name__ == "__main__":
     lemma_pos_dict = {}
     for decade in range(1810, 2010, 10):
         folder = str(decade)
-        print "Processing decade...", folder
+        print("Processing decade...", folder)
         for file in os.listdir(DATA + folder):
             with open(DATA + folder + "/" + file) as fp:
-                print "Processing file..", folder + "/" + file
+                print("Processing file..", folder + "/" + file)
                 process_file(fp, word_dict, lemma_dict, lemma_pos_dict)
     write_pickle(word_dict, OUT + "word-dict.pkl") 
     write_pickle(lemma_dict, OUT + "lemma-dict.pkl") 

@@ -10,6 +10,6 @@ if __name__ == '__main__':
     parser.add_argument("--end-year", type=int, default=2000)
     parser.add_argument("--year-inc", type=int, default=1)
     args = parser.parse_args()
-    years = range(args.start_year, args.end_year + 1, args.year_inc)
+    years = list(range(args.start_year, args.end_year + 1, args.year_inc))
     run_parallel(args.num_procs, args.out_dir, args.in_dir, years)       
 

@@ -1,6 +1,6 @@
 from docopt import docopt
 
-from representations.embedding import EnsembleEmbedding, SVDEmbedding
+from .representations.embedding import EnsembleEmbedding, SVDEmbedding
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
     
     with open(output_path, 'w') as f:
         for i, w in enumerate(svd.iw):
-            print >>f, w, ' '.join([str(x) for x in svd.m[i]])
+            print(w, ' '.join([str(x) for x in svd.m[i]]), file=f)
 
 
 if __name__ == '__main__':

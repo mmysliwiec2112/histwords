@@ -15,7 +15,7 @@ def get_cosine_deltas(base_embeds, delta_embeds, words, type):
         base_embeds, delta_embeds = alignment.explicit_intersection_align(base_embeds, delta_embeds)
     else:
         base_embeds, delta_embeds = alignment.intersection_align(base_embeds, delta_embeds)
-    print base_embeds.m.shape, delta_embeds.m.shape
+    print(base_embeds.m.shape, delta_embeds.m.shape)
     for word in words:
         if base_embeds.oov(word) or delta_embeds.oov(word):
             deltas[word] = float('nan')
@@ -55,16 +55,16 @@ def worker(proc_num, queue, out_pref, in_dir, target_lists, context_lists, displ
     time.sleep(10*random.random())
     while True:
         if queue.empty():
-            print proc_num, "Finished"
+            print(proc_num, "Finished")
             break
         year = queue.get()
-        print proc_num, "Loading matrices..."
+        print(proc_num, "Loading matrices...")
         base = create_representation(type, in_dir + str(year-year_inc),  thresh=thresh, restricted_context=context_lists[year], normalize=True, add_context=False)
         delta = create_representation(type, in_dir + str(year),  thresh=thresh, restricted_context=context_lists[year], normalize=True, add_context=False)
-        print proc_num, "Getting deltas..."
+        print(proc_num, "Getting deltas...")
         year_vols = get_cosine_deltas(base, delta, target_lists[year], type)
         year_disp = get_cosine_deltas(displacement_base, delta, target_lists[year], type)
-        print proc_num, "Writing results..."
+        print(proc_num, "Writing results...")
         ioutils.write_pickle(year_vols, out_pref + str(year) + "-vols.pkl")
         ioutils.write_pickle(year_disp, out_pref + str(year) + "-disps.pkl")
 
@@ -77,9 +77,9 @@ def run_parallel(num_procs, out_pref, in_dir, years, target_lists, context_lists
         p.start()
     for p in procs:
         p.join()
-    print "Merging"
+    print("Merging")
     full_word_set = set([])
-    for year_words in target_lists.itervalues():
+    for year_words in target_lists.values():
         full_word_set = full_word_set.union(set(year_words))
     merge(out_pref, years, list(full_word_set))
 
@@ -98,10 +98,10 @@ if __name__ == '__main__':
     parser.add_argument("--end-year", type=int, help="end year (inclusive)", default=2000)
     parser.add_argument("--disp-year", type=int, help="year to measure displacement from", default=2000)
     args = parser.parse_args()
-    years = range(args.start_year, args.end_year + 1, args.year_inc)
+    years = list(range(args.start_year, args.end_year + 1, args.year_inc))
     target_lists, context_lists = ioutils.load_target_context_words(years, args.word_file, args.target_words, -1)
     if args.context_word_file != None:
-        print "Loading context words.."
+        print("Loading context words..")
         _ , context_lists = ioutils.load_target_context_words(years, args.word_file, -1, args.context_words)
     target_lists, context_lists = ioutils.load_target_context_words(years, args.word_file, args.target_words, args.context_words)
     ioutils.mkdir(args.out_dir)

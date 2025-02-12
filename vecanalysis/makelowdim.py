@@ -17,17 +17,17 @@ def worker(proc_num, queue, out_dir, in_dir, count_dir, words, dim, num_words, m
         if queue.empty():
             break
         year = queue.get()
-        print "Loading embeddings for year", year
+        print("Loading embeddings for year", year)
         time.sleep(random.random() * 120)
         valid_words = set(words_above_count(count_dir, year, min_count))
-        print len(valid_words)
+        print(len(valid_words))
         words = list(valid_words.intersection(words[year][:num_words]))
-        print len(words)
+        print(len(words))
         base_embed = Explicit.load((in_dir + INPUT_FORMAT).format(year=year), normalize=False)
         base_embed = base_embed.get_subembed(words, restrict_context=True)
-        print "SVD for year", year
+        print("SVD for year", year)
         u, s, v = randomized_svd(base_embed.m, n_components=dim, n_iter=5)
-        print "Saving year", year
+        print("Saving year", year)
         np.save((out_dir + OUT_FORMAT).format(year=year, dim=dim) + "-u.npy", u)
         np.save((out_dir + OUT_FORMAT).format(year=year, dim=dim) + "-v.npy", v)
         np.save((out_dir + OUT_FORMAT).format(year=year, dim=dim) + "-s.npy", s)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     parser.add_argument("--min-count", type=int, default=100)
     args = parser.parse_args()
     queue = Queue()
-    years = range(args.start_year, args.end_year + 1, args.year_inc)
+    years = list(range(args.start_year, args.end_year + 1, args.year_inc))
     years.reverse()
     for year in years:
         queue.put(year)

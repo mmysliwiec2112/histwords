@@ -8,7 +8,7 @@ class CachedFreqDist(FreqDist):
     """
     def __init__(self, freqdist):
         FreqDist.__init__(self, freqdist)
-        self._N = np.sum(self.values())
+        self._N = np.sum(list(self.values()))
 
     def N(self):
         return self._N

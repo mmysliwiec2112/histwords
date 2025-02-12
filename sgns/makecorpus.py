@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 from multiprocessing import Process, Queue
-from Queue import Empty
+from queue import Empty
 
 import ioutils
 from vecanalysis.representations.explicit import Explicit
@@ -16,7 +16,7 @@ def worker(proc_num, queue, out_dir, in_dir, count_dir, valid_words, num_words, 
             year = queue.get(block=False)
         except Empty:
             break
-        print proc_num, "Getting counts and matrix year", year
+        print(proc_num, "Getting counts and matrix year", year)
         embed = Explicit.load(in_dir + str(year) + ".bin", normalize=False)
         year_words = valid_words[year][:num_words]
         count_words = set(ioutils.words_above_count(count_dir, year, min_count))
@@ -24,14 +24,14 @@ def worker(proc_num, queue, out_dir, in_dir, count_dir, valid_words, num_words, 
         use_words = list(count_words.intersection(year_words)) 
         embed = embed.get_subembed(use_words, restrict_context=True)
         sample_corr = min(SAMPLE_MAX / freq.N(), 1.0)
-        print "Sample correction..", sample_corr
+        print("Sample correction..", sample_corr)
         embed.m = embed.m * sample_corr
         mat = embed.m.tocoo()
-        print proc_num, "Outputing pairs for year", year
+        print(proc_num, "Outputing pairs for year", year)
         with open(out_dir + str(year) + ".tmp.txt", "w") as fp:
-            for i in xrange(len(mat.data)): 
+            for i in range(len(mat.data)): 
                 if i % 10000 == 0:
-                    print "Done ", i, "of", len(mat.data)
+                    print("Done ", i, "of", len(mat.data))
                 word = embed.iw[mat.row[i]]
                 context = embed.ic[mat.col[i]]
                 if sample != 0:
@@ -42,17 +42,17 @@ def worker(proc_num, queue, out_dir, in_dir, count_dir, valid_words, num_words, 
                 word = word.encode("utf-8")
                 context = context.encode("utf-8")
                 line = word + " " + context + "\n"
-                for j in xrange(int(mat.data[i] * prop_keep)):
+                for j in range(int(mat.data[i] * prop_keep)):
                     fp.write(line)
         mat = mat.tocsr()
-        print proc_num, "Outputing vocab for year", year
+        print(proc_num, "Outputing vocab for year", year)
         with open(out_dir + str(year) + ".vocab", "w") as fp:
             for word in year_words:
                 if not word in count_words:
-                    print >>fp, word.encode("utf-8"), 1
+                    print(word.encode("utf-8"), 1, file=fp)
                 else:
-                    print >>fp, word.encode("utf-8"), int(mat[embed.wi[word], :].sum())
-        print "shuf " + out_dir + str(year) + ".tmp.txt" " > " + out_dir + str(year) + ".txt" 
+                    print(word.encode("utf-8"), int(mat[embed.wi[word], :].sum()), file=fp)
+        print("shuf " + out_dir + str(year) + ".tmp.txt" " > " + out_dir + str(year) + ".txt") 
         os.system("shuf " + out_dir + str(year) + ".tmp.txt" + " > " + out_dir + str(year) + ".txt")
         os.remove(out_dir + str(year) + ".tmp.txt")
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     parser.add_argument("--min-count", type=int, default=100)
     parser.add_argument("--sample", type=float, default=1e-5)
     args = parser.parse_args()
-    years = range(args.start_year, args.end_year + 1, args.year_inc)
+    years = list(range(args.start_year, args.end_year + 1, args.year_inc))
     words = ioutils.load_year_words(args.word_file, years)
     ioutils.mkdir(args.out_dir)
     run_parallel(args.workers, args.out_dir + "/", args.in_dir + "/", args.count_dir + "/", years, words, args.num_words, args.min_count, args.sample)       

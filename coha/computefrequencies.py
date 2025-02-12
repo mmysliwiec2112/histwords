@@ -2,7 +2,7 @@ import os
 
 from collections import Counter
 from multiprocessing import Queue, Process
-from Queue import Empty
+from queue import Empty
 
 from coha.cohastringutils import process_lemma_line
 from ioutils import write_pickle, load_pickle
@@ -16,13 +16,13 @@ def worker(proc_num, queue):
             decade = str(queue.get(block=False))
         except Empty:
              break
-        print "Proc:", proc_num, "Decade:", decade
+        print("Proc:", proc_num, "Decade:", decade)
         word_freqs = Counter()
         lemma_freqs = Counter()
         lemma_pos_freqs = Counter()
         for file in os.listdir(DATA + decade):
             with open(DATA + decade + "/" + file) as fp:
-                print proc_num, file
+                print(proc_num, file)
                 fp.readline()
                 for line in fp:
                     word, lemma, lemma_pos, _ = process_lemma_line(line)
@@ -46,13 +46,13 @@ if __name__ == "__main__":
         p.start()
     for p in procs:
         p.join()
-    print "Getting full freqs..."
+    print("Getting full freqs...")
     word_freqs = Counter()
     lemma_freqs = Counter()
     lemma_pos_freqs = Counter()
     for decade in range(1810, 2010, 10):
         decade = str(decade)
-        print decade
+        print(decade)
         word_freqs += load_pickle(OUT + "decade_freqs/" + decade + "-word.pkl") 
         lemma_freqs += load_pickle(OUT + "decade_freqs/" + decade + "-lemma.pkl") 
         lemma_pos_freqs += load_pickle(OUT + "decade_freqs/" + decade + "-lemma_pos.pkl") 

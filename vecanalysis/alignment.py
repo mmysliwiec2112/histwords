@@ -4,7 +4,7 @@ from representations.embedding import Embedding
 """ Some methods for aligning embeddings spaces """
 
 def explicit_intersection_align(embed1, embed2, restrict_context=True):
-    common_vocab = filter(set(embed1.ic).__contains__, embed2.ic) 
+    common_vocab = list(filter(set(embed1.ic).__contains__, embed2.ic)) 
     return embed1.get_subembed(common_vocab, restrict_context=restrict_context), embed2.get_subembed(common_vocab, restrict_context=restrict_context)
     
 def intersection_align(embed1, embed2, post_normalize=True):
@@ -12,10 +12,10 @@ def intersection_align(embed1, embed2, post_normalize=True):
         Get the intersection of two embeddings.
         Returns embeddings with common vocabulary and indices.
     """
-    common_vocab = filter(set(embed1.iw).__contains__, embed2.iw) 
+    common_vocab = list(filter(set(embed1.iw).__contains__, embed2.iw)) 
     newvecs1 = np.empty((len(common_vocab), embed1.m.shape[1]))
     newvecs2 = np.empty((len(common_vocab), embed2.m.shape[1]))
-    for i in xrange(len(common_vocab)):
+    for i in range(len(common_vocab)):
         newvecs1[i] = embed1.m[embed1.wi[common_vocab[i]]]
         newvecs2[i] = embed2.m[embed2.wi[common_vocab[i]]]
     return Embedding(newvecs1, common_vocab, normalize=post_normalize), Embedding(newvecs2, common_vocab, normalize=post_normalize)

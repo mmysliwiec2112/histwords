@@ -2,7 +2,7 @@ import argparse
 import collections
 
 from multiprocessing import Process, Queue
-from Queue import Empty
+from queue import Empty
 
 from vecanalysis.representations.explicit import Explicit
 from cooccurrence.matstore import export_mat_from_dict
@@ -24,7 +24,7 @@ def worker(proc_num, queue, out_dir, in_dir):
         except Empty:
             break
 
-        print "Processing decade", decade
+        print("Processing decade", decade)
         counts = collections.defaultdict(int)       
         for year in range(10):
             embed = Explicit.load(in_dir + str(decade + year) + ".bin", normalize=False)
@@ -32,13 +32,13 @@ def worker(proc_num, queue, out_dir, in_dir):
                 merged_index = embed.wi
             year_list = load_pickle(in_dir + str(decade + year) + "-list.pkl")
             mat = embed.m.tocoo()
-            for i in xrange(len(mat.data)):
+            for i in range(len(mat.data)):
                 if mat.data[i] == 0:
                     continue
                 new_row = get_index(merged_index, year_list, mat.row[i])
                 new_col = get_index(merged_index, year_list, mat.col[i])
                 counts[(new_row, new_col)] += mat.data[i]
-            print "Done year ", decade + year
+            print("Done year ", decade + year)
         export_mat_from_dict(counts, decade, out_dir)
         write_pickle(merged_index, out_dir + str(decade) + "-index.pkl")
         write_pickle(list(merged_index), out_dir + str(decade) + "-list.pkl")
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     parser.add_argument("--start-year", type=int, help="start year (inclusive)")
     parser.add_argument("--end-year", type=int, help="end year (inclusive)")
     args = parser.parse_args()
-    decades = range(args.start_year, args.end_year + 1, 10)
+    decades = list(range(args.start_year, args.end_year + 1, 10))
     decades.reverse()
     mkdir(args.out_dir)
     run_parallel(args.num_procs, args.out_dir + "/",  args.in_dir + "/", decades)       

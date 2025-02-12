@@ -1,6 +1,6 @@
 from docopt import docopt
 
-from representations.embedding import Embedding, EnsembleEmbedding
+from .representations.embedding import Embedding, EnsembleEmbedding
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
     
     with open(output_path, 'w') as f:
         for i, w in enumerate(sgns.iw):
-            print >>f, w, ' '.join([str(x) for x in sgns.m[i]])
+            print(w, ' '.join([str(x) for x in sgns.m[i]]), file=f)
 
 
 if __name__ == '__main__':

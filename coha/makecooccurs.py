@@ -2,7 +2,7 @@ import os
 
 from collections import Counter
 from multiprocessing import Queue, Process
-from Queue import Empty
+from queue import Empty
 from argparse import ArgumentParser
 
 from coha.cohastringutils import process_lemma_line
@@ -21,11 +21,11 @@ def worker(proc_num, queue, window_size, type, id_map):
             decade = str(queue.get(block=False))
         except Empty:
              break
-        print "Proc:", proc_num, "Decade:", decade
+        print("Proc:", proc_num, "Decade:", decade)
         pair_counts = Counter()
         for file in os.listdir(DATA + decade):
             with open(DATA + decade + "/" + file) as fp:
-                print proc_num, file
+                print(proc_num, file)
                 fp.readline()
                 context = []
                 for line in fp:
@@ -50,8 +50,8 @@ def _process_context(context, pair_counts, window_size):
     if len(context) < window_size + 1:
         return pair_counts
     target = context[window_size]
-    indices = range(0, window_size)
-    indices.extend(range(window_size + 1, 2 * window_size + 1))
+    indices = list(range(0, window_size))
+    indices.extend(list(range(window_size + 1, 2 * window_size + 1)))
     for i in indices:
         if i >= len(context):
             break

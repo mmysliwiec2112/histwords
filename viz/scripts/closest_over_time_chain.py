@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
 
 
-    words = all_lookups.keys()
+    words = list(all_lookups.keys())
     values = [ all_lookups[word] for word in words ]
     fitted = helpers.fit_tsne(values)
 

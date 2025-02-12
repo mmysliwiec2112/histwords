@@ -2,7 +2,7 @@ import argparse
 import os
 import random
 import collections
-from Queue import Empty 
+from queue import Empty 
 from multiprocessing import Process, Queue
 
 from nltk.corpus import stopwords
@@ -32,28 +32,28 @@ def merge(years, out_pref, out_dir):
 
 def main(proc_num, queue, out_pref, out_dir, in_dir, index, freq_thresh, lang):
     random.shuffle(years)
-    print proc_num, "Start loop"
+    print(proc_num, "Start loop")
     while True:
         try: 
             year = queue.get(block=False)
         except Empty:
-            print proc_num, "Finished"
+            print(proc_num, "Finished")
             break
         stop_set = set(stopwords.words(lang))
         word_freqs = {}
-        print "Loading mat for year", year
+        print("Loading mat for year", year)
         year_mat = matstore.retrieve_mat_as_coo(in_dir + str(year) + ".bin")
         year_mat = year_mat.tocsr()
         year_mat = year_mat / year_mat.sum()
-        print "Processing data for year", year
-        for word_i in xrange(year_mat.shape[0]):
+        print("Processing data for year", year)
+        for word_i in range(year_mat.shape[0]):
             word = index[word_i]
             if not word.isalpha() or word in stop_set or len(word) == 1:
                 continue
             year_freq = year_mat[word_i, :].sum()
             word_freqs[word] = year_freq
-        print "Writing data"
-        sorted_list = sorted(word_freqs.keys(), key = lambda key : word_freqs[key], reverse=True)
+        print("Writing data")
+        sorted_list = sorted(list(word_freqs.keys()), key = lambda key : word_freqs[key], reverse=True)
         sorted_list = [word for word in sorted_list 
                     if word_freqs[word] > freq_thresh]
         ioutils.write_pickle(sorted_list, out_dir + str(year) + "tmp.pkl")
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     parser.add_argument("--lang", type=str, default="english", help="language")
     args = parser.parse_args()
 
-    years = range(args.start_year, args.end_year + 1)
+    years = list(range(args.start_year, args.end_year + 1))
     index = ioutils.load_pickle(args.in_dir + "/merged_list.pkl")
     out_pref = args.out_dir + "/freqnonstop_peryear-" + str(years[0]) + "-" + str(years[-1]) + "-"  + str(args.freq_thresh)
     freq_thresh = 10.0 ** (-1.0 * float(args.freq_thresh))

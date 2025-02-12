@@ -1,5 +1,5 @@
 from multiprocessing import Queue, Process
-from Queue import Empty
+from queue import Empty
 import collections
 
 from ioutils import write_pickle, load_pickle
@@ -13,10 +13,10 @@ def worker(proc_num, queue):
             decade = str(queue.get(block=False))
         except Empty:
              break
-        print "Proc:", proc_num, "Decade:", decade
+        print("Proc:", proc_num, "Decade:", decade)
         proper_nouns = set([])
         pos_tags = load_pickle(DATA + str(decade) + "-pos-maj.pkl")
-        for word, tag in pos_tags.iteritems():
+        for word, tag in pos_tags.items():
             if tag == "np":
                 proper_nouns.add(word)
         write_pickle(proper_nouns, OUT + str(decade) + "-proper_nouns.pkl")
@@ -30,21 +30,21 @@ if __name__ == "__main__":
         p.start()
     for p in procs:
         p.join()
-    print "Getting full set..."
+    print("Getting full set...")
     proper_nouns = set([])
     pos_counts = {}
-    print "Merging pos counts.."
+    print("Merging pos counts..")
     for decade in range(1810, 2010, 10):
         decade_pos_counts = load_pickle(DATA + str(decade) + "-pos-counts.pkl")
-        for word, counts in decade_pos_counts.iteritems(): 
+        for word, counts in decade_pos_counts.items(): 
             if word not in pos_counts:
                 pos_counts[word] = collections.Counter()
-            for pos, count in counts.iteritems():
+            for pos, count in counts.items():
                 pos_counts[word][pos] += count
     write_pickle(pos_counts, DATA + "all-pos-counts.pkl")
     pos_maj = {}
     proper_nouns = set([])
-    for word, p_counts in pos_counts.iteritems():
+    for word, p_counts in pos_counts.items():
         pos_maj[word] = sorted(p_counts, key = lambda t : -1*p_counts[t])[0]
         if pos_maj[word] == "np":
             proper_nouns.add(word)

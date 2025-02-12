@@ -2,7 +2,7 @@ from collections import Counter
 
 from docopt import docopt
 
-from representations.matrix_serializer import save_count_vocabulary
+from .representations.matrix_serializer import save_count_vocabulary
 
 
 def main():
@@ -22,8 +22,8 @@ def main():
             words[word] += count
             contexts[context] += count
 
-    words = sorted(words.items(), key=lambda (x, y): y, reverse=True)
-    contexts = sorted(contexts.items(), key=lambda (x, y): y, reverse=True)
+    words = sorted(list(words.items()), key=lambda x_y: x_y[1], reverse=True)
+    contexts = sorted(list(contexts.items()), key=lambda x_y1: x_y1[1], reverse=True)
 
     save_count_vocabulary(counts_path + '.words.vocab', words)
     save_count_vocabulary(counts_path + '.contexts.vocab', contexts)

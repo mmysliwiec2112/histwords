@@ -1,5 +1,5 @@
 import requests
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import re
 import os
 import subprocess
@@ -15,7 +15,7 @@ LINE_SPLIT = 100000000
 EXCLUDE_PATTERN = re.compile('.*_[A-Z]+[_,\s].*')
 
 def split_main(proc_num, queue, download_dir):
-    print proc_num, "Start loop"
+    print(proc_num, "Start loop")
     while True:
         if queue.empty():
             break
@@ -25,24 +25,24 @@ def split_main(proc_num, queue, download_dir):
         if name in [file.split("-")[0] for file in dirs]:
             continue
 
-        print proc_num, "Name", name
+        print(proc_num, "Name", name)
         loc_dir = download_dir + "/" + name + "/"
         ioutils.mkdir(loc_dir)
 
-        print proc_num, "Downloading", name
+        print(proc_num, "Downloading", name)
         success = False
         while not success:
             with open(loc_dir + name + '.gz', 'w') as f:
                 try:
-                    f.write(urllib2.urlopen(url, timeout=60).read())
+                    f.write(urllib.request.urlopen(url, timeout=60).read())
                     success = True
                 except:
-                    print "Fail!!"
+                    print("Fail!!")
                     continue
 
-        print proc_num, "Unzipping", name
+        print(proc_num, "Unzipping", name)
         subprocess.call(['gunzip', '-f', loc_dir + name + '.gz', '-d'])
-        print proc_num, "Splitting", name
+        print(proc_num, "Splitting", name)
         subprocess.call(["split", "-l", str(LINE_SPLIT), loc_dir + name, download_dir + "/" +  name + "-"])
         os.remove(loc_dir + name)
         os.rmdir(loc_dir)

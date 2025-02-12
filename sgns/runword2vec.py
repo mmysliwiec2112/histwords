@@ -9,7 +9,7 @@ SAVE_FILE = "{year:d}"
 
 def train_years(years, in_dir, out_dir, dim, workers, sequential):
     for i, year in enumerate(years):
-        print "Running year", year
+        print("Running year", year)
         if i == 0 or not sequential:
             subprocess.call(['./sgns/hyperwords/word2vecf/word2vecf', 
                     '-output', out_dir + SAVE_FILE.format(year=year) + "-w",
@@ -54,6 +54,6 @@ if __name__ == "__main__":
         out_dir = args.out_dir
     out_dir = out_dir + "/" + str(args.dim) + "/"
     mkdir(out_dir)
-    years = range(args.start_year, args.end_year + 1, args.year_inc)
+    years = list(range(args.start_year, args.end_year + 1, args.year_inc))
     train_years(years, args.in_dir + "/", out_dir, args.dim, args.workers, args.sequential)
 

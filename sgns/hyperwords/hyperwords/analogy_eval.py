@@ -1,9 +1,9 @@
-from __builtin__ import sorted
+from builtins import sorted
 
 from docopt import docopt
 import numpy as np
 
-from representations.representation_factory import create_representation
+from .representations.representation_factory import create_representation
 
 
 def main():
@@ -21,7 +21,7 @@ def main():
     xi, ix = get_vocab(data)
     representation = create_representation(args)
     accuracy_add, accuracy_mul = evaluate(representation, data, xi, ix)
-    print args['<representation>'], args['<representation_path>'], '\t%0.3f' % accuracy_add, '\t%0.3f' % accuracy_mul
+    print(args['<representation>'], args['<representation_path>'], '\t%0.3f' % accuracy_add, '\t%0.3f' % accuracy_mul)
 
 
 def read_test_set(path):

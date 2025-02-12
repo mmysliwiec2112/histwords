@@ -16,7 +16,7 @@ def load_matrix(f):
 def save_vocabulary(path, vocab):
     with open(path, 'w') as f:
         for w in vocab:
-            print >>f, w
+            print(w, file=f)
 
 
 def load_vocabulary(path):
@@ -28,7 +28,7 @@ def load_vocabulary(path):
 def save_count_vocabulary(path, vocab):
     with open(path, 'w') as f:
         for w, c in vocab:
-            print >>f, w, c
+            print(w, c, file=f)
 
 
 def load_count_vocabulary(path):

@@ -32,7 +32,7 @@ def main():
     corpus_size = sum(vocab.values())
     
     subsample *= corpus_size
-    subsampler = dict([(word, 1 - sqrt(subsample / count)) for word, count in vocab.items() if count > subsample])
+    subsampler = dict([(word, 1 - sqrt(subsample / count)) for word, count in list(vocab.items()) if count > subsample])
     
     rnd = Random(17)
     with open(corpus_file) as f: 
@@ -60,11 +60,11 @@ def main():
                         end = len_tokens
                     
                     if pos:
-                        output = '\n'.join([row for row in [tok + ' ' + tokens[j] + '_' + str(j - i) for j in xrange(start, end) if j != i and tokens[j] is not None] if len(row) > 0]).strip()
+                        output = '\n'.join([row for row in [tok + ' ' + tokens[j] + '_' + str(j - i) for j in range(start, end) if j != i and tokens[j] is not None] if len(row) > 0]).strip()
                     else:
-                        output = '\n'.join([row for row in [tok + ' ' + tokens[j] for j in xrange(start, end) if j != i and tokens[j] is not None] if len(row) > 0]).strip()
+                        output = '\n'.join([row for row in [tok + ' ' + tokens[j] for j in range(start, end) if j != i and tokens[j] is not None] if len(row) > 0]).strip()
                     if len(output) > 0:
-                        print output
+                        print(output)
 
 
 def read_vocab(corpus_file, thr):
@@ -72,7 +72,7 @@ def read_vocab(corpus_file, thr):
     with open(corpus_file) as f:
         for line in f:
             vocab.update(Counter(line.strip().split()))
-    return dict([(token, count) for token, count in vocab.items() if count >= thr])
+    return dict([(token, count) for token, count in list(vocab.items()) if count >= thr])
 
 
 if __name__ == '__main__':

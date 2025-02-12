@@ -8,14 +8,14 @@ def series_corr(word_year_series_1, word_year_series_2, i_year_words, start_year
     """
     year_corrs = []
     year_ps = []
-    years = range(start_year, end_year + 1)
+    years = list(range(start_year, end_year + 1))
     if start_year not in i_year_words:
         i_year_words = {year:i_year_words for year in years}
     if series_1_norms == None:
         series_1_norms = ([0 for year in years], [1 for year in years])
     if series_2_norms == None:
         series_2_norms = ([0 for year in years], [1 for year in years])
-    for i in xrange(len(years)):
+    for i in range(len(years)):
         year = years[i]
         s1 = []
         s2 = []
@@ -43,12 +43,12 @@ def get_series_median_peryear(word_time_series, i_year_words, one_minus=False, s
     medians = []
     r_word_time_series = {}
     if exclude_partial_missing:
-        for word, time_series in word_time_series.iteritems():
-            if not np.isnan(np.sum(time_series.values())):
+        for word, time_series in word_time_series.items():
+            if not np.isnan(np.sum(list(time_series.values()))):
                 r_word_time_series[word] = time_series
     else:
         r_word_time_series = word_time_series
-    for year in xrange(start_year, end_year + 1, year_inc):
+    for year in range(start_year, end_year + 1, year_inc):
         word_array = np.array([r_word_time_series[word][year] for word in i_year_words[year] 
             if word in r_word_time_series and not np.isnan(r_word_time_series[word][year]) and not r_word_time_series[word][year] == 0])
         if len(word_array) == 0:
@@ -74,12 +74,12 @@ def get_series_mean_std_peryear(word_time_series, i_year_words, one_minus=False,
     stderrs = []
     r_word_time_series = {}
     if exclude_partial_missing:
-        for word, time_series in word_time_series.iteritems():
-            if not np.isnan(np.sum(time_series.values())):
+        for word, time_series in word_time_series.items():
+            if not np.isnan(np.sum(list(time_series.values()))):
                 r_word_time_series[word] = time_series
     else:
         r_word_time_series = word_time_series
-    for year in xrange(start_year, end_year + 1, year_inc):
+    for year in range(start_year, end_year + 1, year_inc):
         word_array = np.array([r_word_time_series[word][year] for word in i_year_words[year] 
             if word in r_word_time_series and not np.isnan(r_word_time_series[word][year]) and not np.isinf(r_word_time_series[word][year])])
         if len(word_array) == 0:
@@ -105,13 +105,13 @@ def get_series_mean_stderr_peryear(word_time_series, i_year_words, one_minus=Fal
     stderrs = []
     r_word_time_series = {}
     if exclude_partial_missing:
-        for word, time_series in word_time_series.iteritems():
-            time_series = {year:val for year, val in time_series.iteritems() if year >= start_year and year <= end_year}
-            if not np.isnan(np.sum(time_series.values())):
+        for word, time_series in word_time_series.items():
+            time_series = {year:val for year, val in time_series.items() if year >= start_year and year <= end_year}
+            if not np.isnan(np.sum(list(time_series.values()))):
                 r_word_time_series[word] = time_series
     else:
         r_word_time_series = word_time_series
-    for year in xrange(start_year, end_year + 1, year_inc):
+    for year in range(start_year, end_year + 1, year_inc):
         word_array = np.array([r_word_time_series[word][year] for word in i_year_words[year] 
             if word in r_word_time_series and not np.isnan(r_word_time_series[word][year])])
         if one_minus:
@@ -125,7 +125,7 @@ def get_set_dev(series, words, one_minus=False, start_year=1900, end_year=2000, 
     Gets the mean relative deviation of the words in words vs. the full series.
     Only words with valid values throughout the series are included.
     """
-    base_mat = _make_series_mat(series, series.keys(), one_minus=one_minus, start_year=start_year, end_year=end_year)
+    base_mat = _make_series_mat(series, list(series.keys()), one_minus=one_minus, start_year=start_year, end_year=end_year)
     word_mat =  _make_series_mat(series, words, one_minus=one_minus, start_year=start_year, end_year=end_year)
     if method == 'diff':
         word_mat = word_mat - base_mat.mean(0)
@@ -139,11 +139,11 @@ def get_yearly_set_dev(series, i_year_words, one_minus=False, start_year=1900, e
     """
     Gets the mean relative deviation of the words in words vs. the full series.
     """
-    base_mat = _make_series_mat(series, series.keys(), one_minus=one_minus, start_year=start_year, end_year=end_year)
+    base_mat = _make_series_mat(series, list(series.keys()), one_minus=one_minus, start_year=start_year, end_year=end_year)
     means = []
     stderrs = []
     r_word_time_series = series
-    for year in xrange(start_year, end_year + 1):
+    for year in range(start_year, end_year + 1):
         word_array = np.array([r_word_time_series[word][year] for word in i_year_words[year] 
             if word in r_word_time_series and not np.isnan(r_word_time_series[word][year])])
         if one_minus:
@@ -163,7 +163,7 @@ def _make_series_mat(words_time_series, words, one_minus=True, start_year=1900, 
     for word in words:
         if word not in words_time_series:
             continue
-        word_array = np.array([value for year, value in words_time_series[word].items() if year >= start_year and year <=end_year])
+        word_array = np.array([value for year, value in list(words_time_series[word].items()) if year >= start_year and year <=end_year])
         if word_array.min() < 0:
             continue
         if one_minus:

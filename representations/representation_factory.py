@@ -1,5 +1,5 @@
-from embedding import SVDEmbedding, Embedding, GigaEmbedding
-from explicit import Explicit
+from .embedding import SVDEmbedding, Embedding, GigaEmbedding
+from .explicit import Explicit
 
 def create_representation(rep_type, path, *args, **kwargs):
     if rep_type == 'Explicit' or rep_type == 'PPMI':

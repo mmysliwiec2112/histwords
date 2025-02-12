@@ -18,8 +18,8 @@ def _process_context(context, pair_counts, window_size):
     if len(context) < window_size + 1:
         return pair_counts
     target = context[window_size]
-    indices = range(0, window_size)
-    indices.extend(range(window_size + 1, 2 * window_size + 1))
+    indices = list(range(0, window_size))
+    indices.extend(list(range(window_size + 1, 2 * window_size + 1)))
     for i in indices:
         if i >= len(context):
             break

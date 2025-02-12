@@ -1,39 +1,39 @@
 import sys
 import argparse
-from Queue import Empty 
+from queue import Empty 
 from multiprocessing import Process, Queue
 
 from googlengram import indexing
 from representations import sparse_io
 import ioutils
 
-YEARS = range(1900, 2001)
+YEARS = list(range(1900, 2001))
 
 def main(proc_num, queue, out_dir, in_dir):
     merged_index = ioutils.load_pickle(out_dir + "merged_index.pkl") 
-    print proc_num, "Start loop"
+    print(proc_num, "Start loop")
     while True:
         try: 
             year = queue.get(block=False)
         except Empty:
-            print proc_num, "Finished"
+            print(proc_num, "Finished")
             break
-        print proc_num, "Fixing counts for year", year
+        print(proc_num, "Fixing counts for year", year)
         fixed_counts = {}
         old_mat = sparse_io.retrieve_mat_as_dict(in_dir + str(year) + ".bin")
         old_index = ioutils.load_pickle(in_dir + str(year) + "-list.pkl") 
-        for pair, count in old_mat.iteritems():
+        for pair, count in old_mat.items():
             try:
                 i_word = old_index[pair[0]]
             except IndexError:
-                print pair
+                print(pair)
                 sys.exit(0)
             c_word = old_index[pair[1]]
             new_pair = (indexing.word_to_static_id(i_word, merged_index), 
                     indexing.word_to_static_id(c_word, merged_index))
             fixed_counts[new_pair] = count
         
-        print proc_num, "Writing counts for year", year
+        print(proc_num, "Writing counts for year", year)
         sparse_io.export_mats_from_dicts({str(year) : fixed_counts}, out_dir)
 
 def run_parallel(num_procs, out_dir, in_dir):

@@ -38,7 +38,7 @@ def get_time_sims(self, word1):
     lookups = {}
     nearests = {}
     sims = {}
-    for year, embed in self.embeds.iteritems():
+    for year, embed in self.embeds.items():
         nearest = []
         nearests["%s|%s" % (word1, year)]= nearest
         time_sims[year] = []
@@ -51,7 +51,7 @@ def get_time_sims(self, word1):
                 lookups[ww] = embed.represent(word)
                 sims[ww] = sim
 
-    print "GET TIME SIMS FOR %s TOOK %s" % (word1, time.time() - start)
+    print("GET TIME SIMS FOR %s TOOK %s" % (word1, time.time() - start))
     return time_sims, lookups, nearests, sims
 
 EMBED_CACHE = {}
@@ -69,16 +69,16 @@ def load_embeddings(filename=None):
         filename = EMBEDDING
 
     with embed_lock:
-        print "LOADING EMBEDDINGS %s" % filename
+        print("LOADING EMBEDDINGS %s" % filename)
         start = time.time()
 
         if filename in EMBED_CACHE:
             return EMBED_CACHE[filename]
 
-        print "THIS MIGHT TAKE A WHILE..."
+        print("THIS MIGHT TAKE A WHILE...")
 
-        embeddings = SequentialEmbedding.load(filename, range(1840, 2000, 10))
-        print "LOAD EMBEDDINGS TOOK %s" % (time.time() - start)
+        embeddings = SequentialEmbedding.load(filename, list(range(1840, 2000, 10)))
+        print("LOAD EMBEDDINGS TOOK %s" % (time.time() - start))
 
         EMBED_CACHE[filename] = embeddings
         return embeddings
@@ -96,22 +96,22 @@ def get_embedding_list(dirname="embeddings"):
 
 def select_embedding():
     global EMBEDDING
-    print ""
-    print "Please select an embedding to load"
+    print("")
+    print("Please select an embedding to load")
     embeddings = get_embedding_list()
     for i, embed in enumerate(embeddings):
-        print "%s) %s" % (i+1, embed)
+        print("%s) %s" % (i+1, embed))
 
     while True:
-        selection = raw_input("Load which embedding? ")
+        selection = input("Load which embedding? ")
         try:
             select_num = int(selection)
             embedding = embeddings[select_num-1]
             break
         except:
-            print "Please select a number between %s and %s" % (1, len(embeddings))
+            print("Please select a number between %s and %s" % (1, len(embeddings)))
 
-    print ""
+    print("")
     EMBEDDING = embedding
 
     return load_embeddings(embedding)
@@ -129,7 +129,7 @@ def fit_tsne(values):
     mat = np.array(values)
     model = TSNE(n_components=2, random_state=0, learning_rate=150, init='pca')
     fitted = model.fit_transform(mat)
-    print "FIT TSNE TOOK %s" % (time.time() - start)
+    print("FIT TSNE TOOK %s" % (time.time() - start))
 
     return fitted
 
@@ -148,7 +148,7 @@ def plot_words(word1, words, fitted, cmap, sims):
 
     annotations = []
     isArray = type(word1) == list
-    for i in xrange(len(words)):
+    for i in range(len(words)):
         pt = fitted[i]
 
         ww,decade = [w.strip() for w in words[i].split("|")]
@@ -176,7 +176,7 @@ def plot_annotations(annotations):
     for ww, decade, ann in annotations[1:]:
         plt.annotate('', xy=prev, xytext=ann,
             arrowprops=dict(facecolor='blue', shrink=0.1, alpha=0.3,width=2, headwidth=15))
-        print prev, ann
+        print(prev, ann)
         prev = ann
 
 def savefig(name):

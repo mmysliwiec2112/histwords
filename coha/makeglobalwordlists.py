@@ -13,7 +13,7 @@ def make_word_list(type):
     nstop_lists = {}
     nproper_lists = {}
     nstop_nproper_lists = {}
-    print "Processing type: ", type
+    print("Processing type: ", type)
     proper_nouns = load_pickle(PROPER_NOUNS)
     word_lists = [word for word in sorted(freqs, key = lambda val : -1*freqs[val]) if word != "" and word.isalnum()]
     nstop_lists = [word for word in sorted(freqs, key = lambda val : -1*freqs[val]) if not process_word(word) in STOPWORDS if word != "" and word.isalnum()]

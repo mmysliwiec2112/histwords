@@ -9,7 +9,7 @@ def worker(proc_num, queue, dir, count_dir, min_count):
         if queue.empty():
             break
         year = queue.get()
-        print "Loading data..", year
+        print("Loading data..", year)
 #        time.sleep(120 * random.random())
         freqs = load_pickle(count_dir + str(year) + "-counts.pkl")
         iw = []
@@ -22,14 +22,14 @@ def worker(proc_num, queue, dir, count_dir, min_count):
                 line = line.strip().split()
                 iw.append(line[0].decode("utf-8"))
                 if freqs[iw[-1]] >= 500:
-                    w_mat[i,:] = np.array(map(float, line[1:]))
+                    w_mat[i,:] = np.array(list(map(float, line[1:])))
         c_mat = np.zeros((vocab_size, dim))
         with open(dir + str(year) + "-c.txt") as fp:
             fp.readline()
             for i, line in enumerate(fp):
                 line = line.strip().split()
                 if freqs[line[0]] >= min_count:
-                    c_mat[i,:] = np.array(map(float, line[1:]))
+                    c_mat[i,:] = np.array(list(map(float, line[1:])))
         np.save(dir + str(year) + "-w.npy", w_mat)
         np.save(dir + str(year) + "-c.npy", c_mat)
         write_pickle(iw, dir + str(year) + "-vocab.pkl")
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     parser.add_argument("--year-inc", type=int, default=1)
     parser.add_argument("--min-count", type=int, default=500)
     args = parser.parse_args()
-    years = range(args.start_year, args.end_year + 1, args.year_inc)
+    years = list(range(args.start_year, args.end_year + 1, args.year_inc))
     queue = Queue()
     for year in years:
         queue.put(year)

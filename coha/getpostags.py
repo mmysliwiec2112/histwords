@@ -2,7 +2,7 @@ import os
 import collections
 
 from multiprocessing import Queue, Process
-from Queue import Empty
+from queue import Empty
 
 from coha.cohastringutils import process_lemma_line
 from ioutils import write_pickle
@@ -16,11 +16,11 @@ def worker(proc_num, queue):
             decade = str(queue.get(block=False))
         except Empty:
              break
-        print "Proc:", proc_num, "Decade:", decade
+        print("Proc:", proc_num, "Decade:", decade)
         pos_tags = collections.defaultdict(collections.Counter)
         for file in os.listdir(DATA + decade):
             with open(DATA + decade + "/" + file) as fp:
-                print proc_num, file
+                print(proc_num, file)
                 fp.readline()
                 for line in fp:
                     word, lemma, lemma_pos, _ = process_lemma_line(line)
@@ -31,7 +31,7 @@ def worker(proc_num, queue):
                     pos_tags[word][lemma_pos.split("_")[1]] += 1
         write_pickle(pos_tags, OUT + str(decade) + "-pos-counts.pkl")
         pos_maj = {}
-        for word, pos_counts in pos_tags.iteritems():
+        for word, pos_counts in pos_tags.items():
             pos_maj[word] = sorted(pos_counts, key = lambda t : -1*pos_counts[t])[0]
         write_pickle(pos_maj, OUT + str(decade) + "-pos-maj.pkl")
 

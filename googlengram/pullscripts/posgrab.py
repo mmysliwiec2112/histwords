@@ -1,5 +1,5 @@
 import requests
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import re
 import os
 import subprocess
@@ -26,24 +26,24 @@ def main(out_dir, source, years):
         year_counts[year] = {}
         year_doc_counts[year] = {}
 
-    print "Start loop"
+    print("Start loop")
     for url in urls:
         name = re.search('%s-(.*).gz' % VERSION, url).group(1)
-        print  "Downloading", name
+        print("Downloading", name)
 
         success = False
         while not success:
             with open(out_dir + name + '.gz', 'w') as f:
                 try:
-                    f.write(urllib2.urlopen(url, timeout=60).read())
+                    f.write(urllib.request.urlopen(url, timeout=60).read())
                     success = True
                 except:
                     continue
 
-        print  "Unzipping", name
+        print("Unzipping", name)
         subprocess.call(['gunzip', '-f', out_dir + name + '.gz', '-d'])
 
-        print  "Going through", name
+        print("Going through", name)
         with open(out_dir + name) as f:
             for l in f:
                 try:
@@ -72,14 +72,14 @@ def main(out_dir, source, years):
                 except UnicodeDecodeError:
                      pass
 
-        print "Deleting", name
+        print("Deleting", name)
         try:
             os.remove(out_dir + name)
             os.remove(out_dir + name + '.gz')
         except:
             pass
 
-    print "Writing..."
+    print("Writing...")
     for year in years:
         ioutils.write_pickle(year_counts[year], out_dir + str(year) + "-counts.pkl")
         ioutils.write_pickle(year_doc_counts[year], out_dir + str(year) + "-doc_counts.pkl")
@@ -92,6 +92,6 @@ if __name__ == '__main__':
     parser.add_argument("--start-year", type=int, default=1800)
     parser.add_argument("--end-year", type=int, default=2000)
     args = parser.parse_args()
-    years = range(args.start_year, args.end_year + 1)
+    years = list(range(args.start_year, args.end_year + 1))
     ioutils.mkdir(args.out_dir)
     main(args.out_dir + "/", args.source, years) 

@@ -7,7 +7,7 @@ import datetime
 import helpers
 import mimetypes
 
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 import zlib
 
 from collections import defaultdict
@@ -74,7 +74,7 @@ def do_search(word1):
             if not word2 in term_cache:
                 term_cache[word2] = helpers.get_time_sims(embeddings, word2)
             else:
-                print "USING CACHED NEIGHBORS FOR", word2
+                print("USING CACHED NEIGHBORS FOR", word2)
 
             time_sims, lookups, nearests, sims = term_cache[word2]
 
@@ -86,14 +86,14 @@ def do_search(word1):
 
             all_lookups.update(lookups)
 
-        words = all_lookups.keys()
+        words = list(all_lookups.keys())
         values = [ all_lookups[word] for word in words ]
         fitted = helpers.fit_tsne(values)
 
 
         # we should stitch the arrays together into objects, i guess
         objs = []
-        for i in xrange(len(words)):
+        for i in range(len(words)):
             word = words[i]
             ww, decade = word.split("|")
             obj = {
@@ -140,7 +140,7 @@ def do_get(handler):
 
         if cmd == "search":
             term = get_value(query, "term")
-            print "DOING SEARCH", term
+            print("DOING SEARCH", term)
             if term:
                 ret = do_search(term)
             msg_dict.update(ret)

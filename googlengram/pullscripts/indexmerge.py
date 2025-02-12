@@ -3,15 +3,15 @@ import argparse
 
 from googlengram import indexing
 
-YEARS = range(1800, 2001)
+YEARS = list(range(1800, 2001))
 
 def run(out_dir, in_dir):
     index = collections.OrderedDict()
     for year in YEARS:
-        print "Merging year", year
+        print("Merging year", year)
         year_list = ioutils.load_pickle(in_dir + str(year) + "-list.pkl")
         i = 0
-        for i in xrange(len(year_list)):
+        for i in range(len(year_list)):
             word = year_list[i]
             indexing.word_to_cached_id(word, index)
 

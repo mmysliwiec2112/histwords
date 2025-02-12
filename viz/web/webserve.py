@@ -4,26 +4,27 @@ import base64
 import threading
 
 import ssl
-import SocketServer
-import BaseHTTPServer
-from SimpleHTTPServer import SimpleHTTPRequestHandler
+import socketserver
+import http.server
+from http.server import SimpleHTTPRequestHandler
+import importlib
 
 WEB_PORT=5000
 
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     def log_request(self, *args, **kwargs):
         pass
 
 class WebHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         import webhandle
-        reload(webhandle)
+        importlib.reload(webhandle)
 
         webhandle.do_get(self)
 
     def do_POST(self):
         import webhandle
-        reload(webhandle)
+        importlib.reload(webhandle)
 
         webhandle.do_post(self)
 
@@ -31,7 +32,7 @@ class WebHandler(SimpleHTTPRequestHandler):
 SERVER=None
 def serve_http(https_port=80, HandlerClass = WebHandler):
     global SERVER
-    SocketServer.TCPServer.allow_reuse_address = True
+    socketserver.TCPServer.allow_reuse_address = True
     httpd = ThreadedTCPServer(("", https_port), HandlerClass)
     debug("Serving HTTP on", https_port)
 
@@ -39,7 +40,7 @@ def serve_http(https_port=80, HandlerClass = WebHandler):
     SERVER.serve_forever()
 
 def debug(*args):
-    print(" ".join(map(str, args)))
+    print((" ".join(map(str, args))))
 
 def start():
     port = int(WEB_PORT)
@@ -76,7 +77,7 @@ def main():
         t.join(0.5)
 
         if not t.isAlive():
-            print "WEBSERVER DIED, EXITING"
+            print("WEBSERVER DIED, EXITING")
             break
 
 if __name__ == '__main__':

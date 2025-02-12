@@ -12,7 +12,7 @@ def make_ppmi_mat(old_mat, row_probs, col_probs, smooth, neg=1, normalize=False)
     col_d = old_mat.col
     data_d = old_mat.data
     neg = np.log(neg)
-    for i in xrange(len(old_mat.data)):
+    for i in range(len(old_mat.data)):
         if data_d[i] == 0.0:
             continue
         joint_prob = (data_d[i] + smooth) / prob_norm

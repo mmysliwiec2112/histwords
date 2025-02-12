@@ -43,9 +43,9 @@ def plot_word_dist(info, words, start_year, end_year, one_minus=False, legend_lo
     plot_info = {}
     for word in words:
         plot_info[word] = info[word]
-    for title, data_dict in plot_info.iteritems():
+    for title, data_dict in plot_info.items():
         x = []; y = []
-        for year, val in data_dict.iteritems():
+        for year, val in data_dict.items():
             if year >= start_year and year <= end_year:
                 x.append(year)
                 if one_minus:
@@ -54,12 +54,12 @@ def plot_word_dist(info, words, start_year, end_year, one_minus=False, legend_lo
         color = colors.pop()
         plt.plot(x, smooth(np.array(y)), color=color)
         plt.scatter(x, y, marker='.', color=color)
-    plt.legend(plot_info.keys(), loc=legend_loc)
+    plt.legend(list(plot_info.keys()), loc=legend_loc)
     return plt
 
 def get_ccdf(deg_hist, x_min=1):
     cum_counts = [0]
-    degs = range(x_min, np.max(deg_hist.keys()))
+    degs = list(range(x_min, np.max(list(deg_hist.keys()))))
     total_sum = 0
     for deg in degs:
         if deg in deg_hist:
@@ -75,27 +75,27 @@ def plot_word_basic(info, words, start_year, end_year, datatype):
     plot_info = {}
     for word in words:
         plot_info[word] = info[word]
-    for title, data_dict in plot_info.iteritems():
+    for title, data_dict in plot_info.items():
         x = []; y = []
-        for year, val in data_dict[datatype].iteritems():
+        for year, val in data_dict[datatype].items():
             if year >= start_year and year <= end_year:
                 x.append(year)
                 y.append(val)
         color = colors.pop()
         plt.plot(x, smooth(np.array(y)), color=color)
         plt.scatter(x, y, marker='.', color=color)
-    plt.legend(plot_info.keys())
+    plt.legend(list(plot_info.keys()))
     plt.show()
  
 def plot_basic(plot_info, start_year, end_year):
-    for title, data_dict in plot_info.iteritems():
+    for title, data_dict in plot_info.items():
         x = []; y = []
-        for year, val in data_dict.iteritems():
+        for year, val in data_dict.items():
             if year >= start_year and year <= end_year:
                 x.append(year)
                 y.append(val)
         plt.plot(x, y)
-    plt.legend(plot_info.keys())
+    plt.legend(list(plot_info.keys()))
     plt.show()
 
 def plot_smooth(x, y, color='blue', window_len=7, window='hanning', ax=None, lw=1.0, ls="-", **kwargs):
@@ -138,10 +138,10 @@ def smooth(x, window_len=7, window='hanning'):
     """
 
     if x.ndim != 1:
-        raise ValueError, "smooth only accepts 1 dimension arrays."
+        raise ValueError("smooth only accepts 1 dimension arrays.")
 
     if x.size < window_len:
-        raise ValueError, "Input vector needs to be bigger than window size."
+        raise ValueError("Input vector needs to be bigger than window size.")
 
 
     if window_len<3:
@@ -149,7 +149,7 @@ def smooth(x, window_len=7, window='hanning'):
 
 
     if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-        raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
+        raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
 
 
     s=np.r_[x[window_len-1:0:-1],x,x[-1:-window_len:-1]]
